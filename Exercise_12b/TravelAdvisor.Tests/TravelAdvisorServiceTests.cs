@@ -29,4 +29,22 @@ public class TravelAdvisorServiceTests
         //mockNotificationService.VerifyNoOtherCalls();
         mockNotificationService.Verify(x => x.SendNotification(userId, It.Is<string>(msg => msg == expectedMessage)), Times.Once);
     }
+
+    [TestMethod]
+    public void ProvideTravelAdvice_NiceErrorHandlingWhenCountryCodeDoesNotExist() 
+    {
+        // Arrange
+        var mockCountryInfoService = new Mock<ICountryInfoService>();
+        var mockNotificationService = new Mock<INotificationService>();
+        var service = new TravelAdvisorService(mockCountryInfoService.Object, mockNotificationService.Object);
+        
+        // Act
+        string countryCode = "SRB";
+        string userId = "2";
+        service.ProvideTravelAdvice(userId, countryCode);
+
+        // Assert
+        var expectedMessage = $"No country info found for country code {countryCode}";
+        mockNotificationService.Verify(ns => ns.SendNotification(userId, It.Is<string>(msg => msg == expectedMessage)));
+    } 
 }

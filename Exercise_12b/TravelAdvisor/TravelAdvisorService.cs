@@ -12,8 +12,16 @@
     public void ProvideTravelAdvice(string userId, string countryCode)
     {
         var countryInfo = _countryInfoService.GetCountryInfo(countryCode);
-        var message = $"Travel Advice for {countryCode}: {countryInfo.TravelRestrictions}. Vaccinations: {countryInfo.VaccinationRequirements}.";
-        
+        var message = "";
+        if(countryInfo is null) 
+        {
+            message = $"No country info found for country code {countryCode}";
+        }
+        else 
+        {
+            message = $"Travel Advice for {countryCode}: {countryInfo.TravelRestrictions}. Vaccinations: {countryInfo.VaccinationRequirements}.";
+        }
+
         _notificationService.SendNotification(userId, message);
     }
 }
